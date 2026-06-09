@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABC-MART 小小大使 選鞋清單｜2026 Q2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; color: #1a1a1a; padding: 24px 16px; }
+  .container { max-width: 900px; margin: 0 auto; }
+  .header { margin-bottom: 20px; }
+  .header h1 { font-size: 20px; font-weight: 600; }
+  .header p { font-size: 13px; color: #666; margin-top: 4px; }
+  .deadline { display:inline-flex; align-items:center; gap:5px; margin-top:10px; font-size:12px; padding:4px 14px; border-radius:20px; background:#fff8e6; color:#a06000; border:1px solid #ffe8a0; }
+  .notice { margin-top:14px; padding:12px 16px; border-radius:10px; border:1px solid #ffe8a0; background:#fff8e6; color:#7a4800; font-size:13px; line-height:1.6; }
+  .notice strong { font-weight:600; display:block; margin-bottom:4px; }
+  .steps { margin-top:12px; display:flex; gap:8px; flex-wrap:wrap; }
+  .step { display:flex; align-items:center; gap:7px; font-size:12px; color:#555; background:#fff; padding:6px 14px; border-radius:20px; border:1px solid #e0e0e0; }
+  .step-num { width:20px; height:20px; border-radius:50%; background:#1a1a1a; color:#fff; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; flex-shrink:0; }
+  .form-btn { display:inline-flex; align-items:center; gap:8px; margin-top:16px; padding:10px 24px; border-radius:24px; background:#1a1a1a; color:#fff; font-size:14px; font-weight:500; text-decoration:none; transition:background 0.15s; }
+  .form-btn:hover { background:#333; }
+  .divider { height:1px; background:#e0e0e0; margin:24px 0 16px; }
+  .filter-section { margin-bottom:12px; }
+  .filter-label { font-size:11px; color:#888; margin-bottom:6px; }
+  .filters { display:flex; flex-wrap:wrap; gap:6px; }
+  .filter-btn { font-size:12px; padding:4px 14px; border-radius:20px; border:1px solid #ddd; background:#fff; color:#555; cursor:pointer; transition:all 0.15s; }
+  .filter-btn.active { background:#1a1a1a; color:#fff; border-color:#1a1a1a; }
+  .filter-btn:hover:not(.active) { border-color:#aaa; }
+  .count { font-size:12px; color:#888; margin-bottom:12px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(180px, 1fr)); gap:14px; }
+
+  /* 卡片 */
+  .card { background:#fff; border:1px solid #e8e8e8; border-radius:14px; overflow:hidden; display:block; transition:border-color 0.15s, box-shadow 0.15s; }
+  .card:hover { border-color:#bbb; box-shadow:0 2px 10px rgba(0,0,0,0.08); }
+  .card-img-wrap { position:relative; width:100%; aspect-ratio:1; background:#f8f8f8; overflow:hidden; }
+  .card-img { width:100%; height:100%; object-fit:cover; display:block; position:absolute; top:0; left:0; opacity:0; transition:opacity 0.2s; }
+  .card-img.active { opacity:1; }
+  .only-badge { position:absolute; top:8px; left:8px; background:#e8001a; color:#fff; font-size:9px; font-weight:600; padding:2px 7px; border-radius:10px; letter-spacing:0.04em; }
+  .card-body { padding:10px 12px 12px; }
+  .brand { font-size:10px; font-weight:600; color:#888; letter-spacing:0.08em; text-transform:uppercase; }
+  .name { font-size:13px; font-weight:600; color:#1a1a1a; margin:3px 0 6px; line-height:1.35; }
+
+  /* 色系選擇器 */
+  .color-selector { display:flex; gap:5px; flex-wrap:wrap; margin-bottom:8px; }
+  .cs-dot { width:20px; height:20px; border-radius:50%; border:2px solid transparent; cursor:pointer; transition:all 0.15s; flex-shrink:0; position:relative; }
+  .cs-dot.active { border-color:#1a1a1a; transform:scale(1.15); }
+  .cs-dot::after { content:attr(data-label); position:absolute; bottom:24px; left:50%; transform:translateX(-50%); background:#1a1a1a; color:#fff; border-radius:4px; padding:2px 7px; font-size:10px; white-space:nowrap; pointer-events:none; opacity:0; transition:opacity 0.1s; z-index:10; }
+  .cs-dot:hover::after { opacity:1; }
+
+  .selected-color { font-size:11px; color:#444; margin-bottom:6px; min-height:16px; }
+  .model { font-size:10px; color:#aaa; margin-bottom:6px; }
+  .link-row { padding-top:8px; border-top:1px solid #f0f0f0; display:flex; align-items:center; justify-content:space-between; }
+  .link-btn { font-size:11px; color:#0066cc; text-decoration:none; }
+  .size-tip { font-size:10px; color:#a06000; }
+  .no-results { padding:3rem; text-align:center; color:#aaa; font-size:14px; grid-column:1/-1; }
+  @media (max-width:480px) { .grid { grid-template-columns:repeat(2, 1fr); } .steps { flex-direction:column; } }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>ABC-MART 小小大使 選鞋清單</h1>
+    <p>2026 Q2｜共 <span id="total"></span> 款式｜每人選 3 雙，同款只選一色</p>
+    <div class="deadline">⏰ 截止日期：6 / 22</div>
+  </div>
+  <div class="notice">
+    <strong>⚠️ 選鞋前請注意</strong>
+    點入官網後，請確認該款式有顯示你的尺寸才選，再填入下方表單。每人選 3 雙，<strong>同款只能選一色</strong>。
+  </div>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div>瀏覽款式，點色點切換顏色</div>
+    <div class="step"><div class="step-num">2</div>點「查看官網」確認有你的尺寸</div>
+    <div class="step"><div class="step-num">3</div>填寫回填表單</div>
+  </div>
+  <a class="form-btn" href="https://forms.gle/P2gchCHGnbjGtUNk7" target="_blank">📋 填寫選鞋回填表單 →</a>
+  <div class="divider"></div>
+  <div class="filter-section">
+    <div class="filter-label">依品牌篩選</div>
+    <div class="filters" id="brand-filters"></div>
+  </div>
+  <div class="count" id="count-label"></div>
+  <div class="grid" id="grid"></div>
+</div>
+<script>
+const COLOR_MAP = {
+  '鬥牛黑':'#1a1a1a','小公主粉':'#f4a7b9','桃白':'#f9c5b3','酸梅紫':'#b48ec8',
+  '阿凡達藍':'#5bbcd6','黑多彩':'#3a3a3a','白多彩':'#e8e8e8','藍多彩':'#7ab8e8',
+  '紅/粉紅多彩':'#e8768a','灰多彩':'#bbb','橘多彩':'#f4a460','白金屬':'#d0d0d0',
+  '黑金屬':'#555','哥布綠':'#7aad6e','梨綠':'#b5cc6a','紅/粉紅素面':'#e05070','月亮灰':'#c0bdb8',
+};
+const LIGHT = ['白多彩','白金屬','月亮灰','灰多彩','桃白'];
+
+// 同款不同色群組
+const groups = [
+  {brand:'FILA', name:'ANCERUS', variants:[
+    {color:'鬥牛黑', model:'FK262SN01X002-001', img:'FK262SN01X002-00108-01.jpg', url:'https://www.abc-mart.com.tw/product/fk262sn01x002-001'},
+    {color:'小公主粉', model:'FK262SN01X002-660', img:'FK262SN01X002-66068-01.jpg', url:'https://www.abc-mart.com.tw/product/fk262sn01x002-660'},
+  ]},
+  {brand:'FILA', name:'URBAN CREEK', variants:[
+    {color:'小公主粉', model:'FK262SD01X008-660', img:'FK262SD01X008-66068-01.jpg', url:'https://www.abc-mart.com.tw/product/fk262sd01x008-660'},
+    {color:'白金屬', model:'FK262SD01X008-031', img:'FK262SD01X008-03113-01.jpg', url:'https://www.abc-mart.com.tw/product/fk262sd01x008-031'},
+  ]},
+  {brand:'PUMA', name:'Trinity 2 AC+ PS', variants:[
+    {color:'白多彩', model:'40149110', img:'4014911015-01.jpg', url:'https://www.abc-mart.com.tw/product/40149110'},
+    {color:'白多彩', model:'40149112', img:'4014911215-01.jpg', url:'https://www.abc-mart.com.tw/product/40149112'},
+  ]},
+  {brand:'PUMA', name:'Cool Cat 2.0 PS BX', variants:[
+    {color:'鬥牛黑', model:'39088551', img:'3908855108-01.webp', url:'https://www.abc-mart.com.tw/product/39088551'},
+    {color:'小公主粉', model:'39088553', img:'3908855368-01.jpg', url:'https://www.abc-mart.com.tw/product/39088553'},
+  ]},
+  {brand:'PUMA', name:'Speedcat Ballet SD PS', variants:[
+    {color:'小公主粉', model:'40698502', img:'4069850268-01.jpg', url:'https://www.abc-mart.com.tw/product/40698502'},
+  ]},
+  {brand:'PUMA', name:'Smash 3.0 Dino V Inf', variants:[
+    {color:'白多彩', model:'40563701', img:'4056370115-01.jpg', url:'https://www.abc-mart.com.tw/product/40563701'},
+    {color:'藍多彩', model:'40563702', img:'4056370245-01.jpg', url:'https://www.abc-mart.com.tw/product/40563702'},
+  ]},
+  {brand:'SKECHERS', name:'WAVE 92', variants:[
+    {color:'桃白', model:'303557LNAT', img:'303557LNAT18-01.jpg', url:'https://www.abc-mart.com.tw/product/303557lnat'},
+  ]},
+  {brand:'SKECHERS', name:'BOUNDER PRO', variants:[
+    {color:'鬥牛黑', model:'303690LBLK', img:'303690LBLK05-01.jpg', url:'https://www.abc-mart.com.tw/product/303690lblk'},
+    {color:'小公主粉', model:'303690LLTPK', img:'303690LLTPK68-01.jpg', url:'https://www.abc-mart.com.tw/product/303690lltpk'},
+  ]},
+  {brand:'SKECHERS', name:'SOLA GLOW 2.0', variants:[
+    {color:'酸梅紫', model:'303729LGYPK', img:'303729LGYPK58-01.jpg', url:'https://www.abc-mart.com.tw/product/303729lgypk'},
+    {color:'酸梅紫', model:'303729LNVPK', img:'303729LNVPK58-01.jpg', url:'https://www.abc-mart.com.tw/product/303729lnvpk'},
+  ]},
+  {brand:'SKECHERS', name:'MICROSPEC VELOCITY', variants:[
+    {color:'阿凡達藍', model:'404125LNVSL', img:'404125LNVSL48-01.jpg', url:'https://www.abc-mart.com.tw/product/404125lnvsl'},
+    {color:'黑多彩', model:'404125LRDBK', img:'404125LRDBK05-01.jpg', url:'https://www.abc-mart.com.tw/product/404125lrdbk'},
+  ]},
+  {brand:'SKECHERS', name:'HOTSHOT', variants:[
+    {color:'桃白', model:'310581LNTPK', img:'310581LNTPK18-01.jpg', url:'https://www.abc-mart.com.tw/product/310581lntpk'},
+  ]},
+  {brand:'ADIDAS', name:'FortaRun 4.0 EL C', variants:[
+    {color:'白多彩', model:'JR9834', img:'JR983415-01.jpg', url:'https://www.abc-mart.com.tw/product/jr9834'},
+  ]},
+  {brand:'ADIDAS', name:'ADIFOM SUPERSTAR 360 I', variants:[
+    {color:'小公主粉', model:'IH7069', img:'IH706968-01.jpg', url:'https://www.abc-mart.com.tw/product/ih7069'},
+  ]},
+  {brand:'ADIDAS', name:'DURAMO SL2 EL C', variants:[
+    {color:'白多彩', model:'JS2385', img:'JS238515-01.jpg', url:'https://www.abc-mart.com.tw/product/js2385'},
+    {color:'小公主粉', model:'JS2384', img:'JS238468-01.jpg', url:'https://www.abc-mart.com.tw/product/js2384'},
+    {color:'鬥牛黑', model:'JS2383', img:'JS238308-01.jpg', url:'https://www.abc-mart.com.tw/product/js2383'},
+  ]},
+  {brand:'ADIDAS', name:'STARSTRIDE I', variants:[
+    {color:'小公主粉', model:'KI8900', img:'KI890068-01.jpg', url:'https://www.abc-mart.com.tw/product/ki8900'},
+    {color:'鬥牛黑', model:'KI6483', img:'KI648308-01.webp', url:'https://www.abc-mart.com.tw/product/ki6483'},
+  ]},
+  {brand:'NIKE', name:'NIKE V5 RNR (TD)', variants:[
+    {color:'桃白', model:'HQ6413-003', img:'HQ6413-00318-01.jpg', url:'https://www.abc-mart.com.tw/product/hq6413-003'},
+  ]},
+  {brand:'NIKE', name:'Nike Stellar Ride (PS)', variants:[
+    {color:'鬥牛黑', model:'HQ3267-010', img:'HQ3267-01008-01.jpg', url:'https://www.abc-mart.com.tw/product/hq3267-010'},
+  ]},
+  {brand:'NIKE', name:'Nike Court Borough Low Recraft (PS)', variants:[
+    {color:'白多彩', model:'DV5457-140', img:'DV5457-14015-01.jpg', url:'https://www.abc-mart.com.tw/product/dv5457-140'},
+  ]},
+  {brand:'NIKE', name:'Nike Kawa SE (TD)', variants:[
+    {color:'白多彩', model:'IF3657-100', img:'IF3657-10015-01.webp', url:'https://www.abc-mart.com.tw/product/if3657-100'},
+  ]},
+  {brand:'NIKE', name:'Nike Court Borough Low (PS)', variants:[
+    {color:'桃白', model:'IR3999-100', img:'IR3999-10018-01.webp', url:'https://www.abc-mart.com.tw/product/ir3999-100'},
+  ]},
+  {brand:'NIKE', name:'Nike Court Borough Low (TD)', variants:[
+    {color:'桃白', model:'IR4000-100', img:'IR4000-10018-01.webp', url:'https://www.abc-mart.com.tw/product/ir4000-100'},
+  ]},
+  {brand:'NEW BALANCE', name:'大童復古鞋', variants:[
+    {color:'桃白', model:'G4084GK', img:'G4084GK18-01.jpg', url:'https://www.abc-mart.com.tw/product/g4084gk'},
+    {color:'桃白', model:'G4085LI', img:'G4085LI18-01.jpg', url:'https://www.abc-mart.com.tw/product/g4085li'},
+  ]},
+  {brand:'NEW BALANCE', name:'小童復古鞋', variants:[
+    {color:'桃白', model:'I4081Q1', img:'I4081Q118-01.webp', url:'https://www.abc-mart.com.tw/product/i4081q1'},
+    {color:'桃白', model:'I4083KP', img:'I4083KP18-01.webp', url:'https://www.abc-mart.com.tw/product/i4083kp'},
+    {color:'小公主粉', model:'I4083YV', img:'I4083YV68-01.jpg', url:'https://www.abc-mart.com.tw/product/i4083yv'},
+    {color:'月亮灰', model:'I4086OZ', img:'I4086OZ98-01.jpg', url:'https://www.abc-mart.com.tw/product/i4086oz'},
+    {color:'鬥牛黑', model:'I4089RP', img:'I4089RP08-01.webp', url:'https://www.abc-mart.com.tw/product/i4089rp'},
+  ]},
+  {brand:'NEW BALANCE', name:'中童復古鞋', variants:[
+    {color:'桃白', model:'P40826U', img:'P40826U18-01.jpg', url:'https://www.abc-mart.com.tw/product/p40826u'},
+    {color:'小公主粉', model:'P4082HO', img:'P4082HO68-01.jpg', url:'https://www.abc-mart.com.tw/product/p4082ho'},
+    {color:'鬥牛黑', model:'P4082LF', img:'P4082LF08-01.jpg', url:'https://www.abc-mart.com.tw/product/p4082lf'},
+    {color:'桃白', model:'P40866R', img:'P40866R18-01.jpg', url:'https://www.abc-mart.com.tw/product/p40866r'},
+  ]},
+  {brand:'NEW BALANCE', name:'中童拖鞋', variants:[
+    {color:'鬥牛黑', model:'Y2009XI', img:'Y2009XI08-01.webp', url:'https://www.abc-mart.com.tw/product/y2009xi'},
+    {color:'桃白', model:'Y2005VA', img:'Y2005VA18-01.webp', url:'https://www.abc-mart.com.tw/product/y2005va'},
+  ]},
+  {brand:'ABC SELECT', name:'ELITE JOG', variants:[
+    {color:'紅/粉紅多彩', model:'A460501003', img:'A46050100365-01.jpg', url:'https://www.abc-mart.com.tw/product/a460501003'},
+    {color:'灰多彩', model:'A460501002', img:'A46050100295-01.jpg', url:'https://www.abc-mart.com.tw/product/a460501002'},
+  ]},
+  {brand:'CROCS', name:'Classic Retro Summer Clog K', variants:[
+    {color:'橘多彩', model:'213269-5AD', img:'213269-5AD85-01.jpg', url:'https://www.abc-mart.com.tw/product/213269-5ad'},
+  ]},
+  {brand:'CROCS', name:'Classic Snow Cone Clog K', variants:[
+    {color:'白多彩', model:'213266-410', img:'213266-41015-01.jpg', url:'https://www.abc-mart.com.tw/product/213266-410'},
+  ]},
+  {brand:'VANS', name:'12-16 RAY AQUA', variants:[
+    {color:'鬥牛黑', model:'V263232001', img:'V26323200108-01.webp', url:'https://www.abc-mart.com.tw/product/v263232001'},
+    {color:'小公主粉', model:'V263232002', img:'V26323200268-01.jpg', url:'https://www.abc-mart.com.tw/product/v263232002'},
+    {color:'梨綠', model:'V263232003', img:'V26323200339-01.jpg', url:'https://www.abc-mart.com.tw/product/v263232003'},
+  ]},
+  {brand:'CONVERSE', name:'Chuck Taylor All Star 1V', variants:[
+    {color:'紅/粉紅素面', model:'A17099C20', img:'A17099C60-01.jpg', url:'https://www.abc-mart.com.tw/product/a17099c20'},
+  ]},
+  {brand:'PONY', name:'COOLING-K', variants:[
+    {color:'黑金屬', model:'261K1CL01SL', img:'261K1CL01SL03-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl01sl'},
+    {color:'黑多彩', model:'261K1CL01YW', img:'261K1CL01YW05-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl01yw'},
+    {color:'哥布綠', model:'261K1CL02GN', img:'261K1CL02GN38-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl02gn'},
+  ]},
+  {brand:'G.T HAWKINS', name:'LM BROOKE', variants:[
+    {color:'酸梅紫', model:'G160501013', img:'G16050101358-01.jpg', url:'https://www.abc-mart.com.tw/product/g160501013'},
+    {color:'阿凡達藍', model:'G160501014', img:'G16050101448-01.jpg', url:'https://www.abc-mart.com.tw/product/g160501014'},
+  ]},
+  {brand:'G.T HAWKINS', name:'MACH BROOKE', variants:[
+    {color:'鬥牛黑', model:'G160501011', img:'G16050101108-01.webp', url:'https://www.abc-mart.com.tw/product/g160501011'},
+    {color:'阿凡達藍', model:'G160501012', img:'G16050101248-01.jpg', url:'https://www.abc-mart.com.tw/product/g160501012'},
+  ]},
+];
+
+document.getElementById('total').textContent = groups.length;
+const brands = ['全部', ...new Set(groups.map(g => g.brand))];
+let activeBrand = '全部';
+
+const bf = document.getElementById('brand-filters');
+brands.forEach(b => {
+  const btn = document.createElement('button');
+  btn.className = 'filter-btn' + (b==='全部'?' active':'');
+  btn.textContent = b;
+  btn.onclick = () => {
+    activeBrand = b;
+    document.querySelectorAll('.filter-btn').forEach(x => x.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  };
+  bf.appendChild(btn);
+});
+
+function makeCard(g) {
+  const hasMulti = g.variants.length > 1;
+  const card = document.createElement('div');
+  card.className = 'card';
+
+  // 圖片區
+  const imgWrap = document.createElement('div');
+  imgWrap.className = 'card-img-wrap';
+  g.variants.forEach((v, i) => {
+    const img = document.createElement('img');
+    img.className = 'card-img' + (i===0?' active':'');
+    img.src = 'images/' + v.img;
+    img.alt = g.brand + ' ' + g.name;
+    img.loading = 'lazy';
+    img.onerror = function(){ this.style.display='none'; };
+    imgWrap.appendChild(img);
+  });
+  if(hasMulti) {
+    const badge = document.createElement('div');
+    badge.className = 'only-badge';
+    badge.textContent = '同款！只選一色';
+    imgWrap.appendChild(badge);
+  }
+  card.appendChild(imgWrap);
+
+  // 內文區
+  const body = document.createElement('div');
+  body.className = 'card-body';
+  body.innerHTML = `<div class="brand">${g.brand}</div><div class="name">${g.name}</div>`;
+
+  // 色點選擇器
+  const selector = document.createElement('div');
+  selector.className = 'color-selector';
+  const colorLabel = document.createElement('div');
+  colorLabel.className = 'selected-color';
+  const modelLabel = document.createElement('div');
+  modelLabel.className = 'model';
+  const linkRow = document.createElement('div');
+  linkRow.className = 'link-row';
+
+  let activeIdx = 0;
+  function updateActive(idx) {
+    activeIdx = idx;
+    const v = g.variants[idx];
+    // 切換圖片
+    imgWrap.querySelectorAll('.card-img').forEach((img, i) => img.classList.toggle('active', i===idx));
+    // 更新色名、型號、連結
+    colorLabel.textContent = v.color;
+    modelLabel.textContent = v.model;
+    linkRow.innerHTML = `<a class="link-btn" href="${v.url}" target="_blank">🔗 查看官網</a><span class="size-tip">📏 確認尺寸</span>`;
+    // 更新色點active
+    selector.querySelectorAll('.cs-dot').forEach((d, i) => d.classList.toggle('active', i===idx));
+  }
+
+  g.variants.forEach((v, i) => {
+    const dot = document.createElement('div');
+    dot.className = 'cs-dot' + (i===0?' active':'');
+    dot.style.background = COLOR_MAP[v.color] || '#ccc';
+    dot.setAttribute('data-label', v.color);
+    if(LIGHT.includes(v.color)) dot.style.boxShadow = 'inset 0 0 0 1.5px #ccc';
+    dot.onclick = () => updateActive(i);
+    selector.appendChild(dot);
+  });
+
+  body.appendChild(selector);
+  body.appendChild(colorLabel);
+  body.appendChild(modelLabel);
+  body.appendChild(linkRow);
+  card.appendChild(body);
+
+  // 初始化
+  updateActive(0);
+  return card;
+}
+
+function render() {
+  const filtered = activeBrand === '全部' ? groups : groups.filter(g => g.brand === activeBrand);
+  document.getElementById('count-label').textContent = `顯示 ${filtered.length} 款式`;
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  if(!filtered.length) {
+    grid.innerHTML = '<div class="no-results">沒有符合條件的款式</div>';
+    return;
+  }
+  filtered.forEach(g => grid.appendChild(makeCard(g)));
+}
+render();
+</script>
+</body>
+</html>

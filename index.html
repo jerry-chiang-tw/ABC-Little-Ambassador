@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ABC-MART 小小大使 選鞋清單｜2026 Q2</title>
+<title>ABC-MART 小小大使 選鞋清單｜2026 Q3</title>
 <style>
 * { box-sizing:border-box; margin:0; padding:0; }
 body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f5f5f3; color:#1a1a1a; min-height:100vh; }
@@ -67,7 +67,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
   <div class="login-box">
     <div class="login-logo">ABC-MART</div>
     <div class="login-title">小小大使 選鞋清單</div>
-    <div class="login-sub">2026 Q2</div>
+    <div class="login-sub">2026 Q3</div>
     <div class="login-label">請輸入你的專屬密碼</div>
     <input class="login-input" type="password" id="password-input" placeholder="輸入密碼" autocomplete="off">
     <button class="login-btn" onclick="doLogin()">進入我的選鞋清單</button>
@@ -82,10 +82,10 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
       <button class="logout-btn" onclick="doLogout()">登出</button>
     </div>
     <p id="user-sub"></p>
-    <div class="deadline">⏰ 截止日期：6 / 22</div>
+    <div class="deadline">⏰ 截止日期：10 / 2</div>
   </div>
   <div class="notice">
-    以下是幫你挑好的鞋款，請每組選 1 款、同款只能選一色，最後挑選為 <strong>3 雙</strong>。<br><br>
+    以下是幫你挑好的鞋款，請從中挑選 <strong>3 雙</strong>，同款只能選一色。<br><br>
     尺寸已標示在卡片上，如果要確認尺寸正確，仍建議試穿。<br><br>
     填表單時請填寫正確，如需修正需在商品寄出前提出修改，<strong>公關品寄出後恕不提供換貨等需求</strong>。
   </div>
@@ -100,155 +100,445 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
 </div>
 
 <script>
-const COLOR_MAP = {
+const COLOR_MAP = {'淺灰':'#c9cccc','黑白':'#2a2a2a','白藍':'#dbe8f5','淺藍':'#a9c4e6','淺粉':'#f4b8c8','薄荷多彩':'#bfe3d0','白黑':'#f2f2f2','粉彩':'#f0c9dd','黑色':'#1a1a1a',
   '鬥牛黑':'#1a1a1a','小公主粉':'#f4a7b9','桃白':'#f9c5b3','酸梅紫':'#b48ec8',
   '阿凡達藍':'#5bbcd6','黑多彩':'#3a3a3a','白多彩':'#e8e8e8','藍多彩':'#7ab8e8',
   '紅/粉紅多彩':'#e8768a','灰多彩':'#bbb','橘多彩':'#f4a460','白金屬':'#d0d0d0',
   '黑金屬':'#555','哥布綠':'#7aad6e','梨綠':'#b5cc6a','紅/粉紅素面':'#e05070',
-  '月亮灰':'#c0bdb8','粉紫':'#d4aee0','白銀':'#e8e8e8','黑銀':'#444',
+  '月亮灰':'#c0bdb8','粉紫':'#d4aee0','白銀':'#e8e8e8','米白':'#efe6d6','粉白':'#f3d3dc','黑銀':'#444',
 };
-const LIGHT = ['白多彩','白金屬','月亮灰','灰多彩','桃白','白銀'];
+const LIGHT = ['淺灰','白藍','淺藍','淺粉','薄荷多彩','白黑','粉彩','米白','粉白','白多彩','白金屬','月亮灰','灰多彩','桃白','白銀'];
 
 const USERS = {
-  '1212': {
-    name:'小飯糰', sub:'@hi_mira1212 ／ 參考尺寸 15cm', formUrl:'https://forms.gle/gMed5hp38SwPoXXH8',
-    groups:[
-      { label:'第 1 雙 ── 選一款（選一色）', items:[
-        { brand:'FILA', name:'URBAN CREEK', sizes:['13','14','15','16'],
-          variants:[
-            {color:'白金屬', model:'FK262SD01X008-031', img:'FK262SD01X008-03113-01.jpg', url:'https://www.abc-mart.com.tw/product/fk262sd01x008-031'},
-            {color:'小公主粉', model:'FK262SD01X008-660', img:'FK262SD01X008-66068-01.jpg', url:'https://www.abc-mart.com.tw/product/fk262sd01x008-660'},
-          ]},
-      ]},
-      { label:'第 2 雙 ── 選一款（選一色）', items:[
-        { brand:'PUMA', name:'Smash 3.0 Dino V Inf', sizes:['14','14.5','15','15.5','16.5'],
-          variants:[
-            {color:'白多彩', model:'40563701', img:'4056370115-01.jpg', url:'https://www.abc-mart.com.tw/product/40563701'},
-            {color:'藍多彩', model:'40563702', img:'4056370245-01.jpg', url:'https://www.abc-mart.com.tw/product/40563702'},
-          ]},
-      ]},
-      { label:'第 3 雙 ── 選一款（選一色）', items:[
-        { brand:'NEW BALANCE', name:'小童復古鞋', sizes:['13.5','14.5','15','16'],
-          variants:[
-            {color:'桃白', model:'I4081Q1', img:'I4081Q118-01.webp', url:'https://www.abc-mart.com.tw/product/i4081q1'},
-            {color:'桃白', model:'I4083KP', img:'I4083KP18-01.webp', url:'https://www.abc-mart.com.tw/product/i4083kp'},
-            {color:'小公主粉', model:'I4083YV', img:'I4083YV68-01.jpg', url:'https://www.abc-mart.com.tw/product/i4083yv'},
-            {color:'月亮灰', model:'I4086OZ', img:'I4086OZ98-01.jpg', url:'https://www.abc-mart.com.tw/product/i4086oz'},
-            {color:'鬥牛黑', model:'I4089RP', img:'I4089RP08-01.webp', url:'https://www.abc-mart.com.tw/product/i4089rp'},
-          ]},
-      ]},
+ "216": {
+  "name": "馬各斯",
+  "sub": "@magese216",
+  "formUrl": "",
+  "groups": [
+   {
+    "label": "請挑選 3 雙（同款只能選一色）",
+    "items": [
+     {
+      "brand": "PONY",
+      "name": "MODERN-K",
+      "sizes": [
+       "18~23"
+      ],
+      "variants": [
+       {
+        "color": "鬥牛黑",
+        "model": "262K1MD01BK",
+        "img": "262K1MD01BK.jpg",
+        "url": "https://www.abc-mart.com.tw/product/262k1md01bk"
+       },
+       {
+        "color": "藍多彩",
+        "model": "262K1MD01BL",
+        "img": "262K1MD01BL.jpg",
+        "url": "https://www.abc-mart.com.tw/product/262k1md01bl"
+       }
+      ]
+     },
+     {
+      "brand": "FILA",
+      "name": "SKIPPER MS",
+      "sizes": [
+       "18~24"
+      ],
+      "variants": [
+       {
+        "color": "米白",
+        "model": "FK262RU01X001-260",
+        "img": "FK262RU01X001-260.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk262ru01x001-260"
+       },
+       {
+        "color": "淺灰",
+        "model": "FK262RU01X001-031",
+        "img": "FK262RU01X001-031.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk262ru01x001-031"
+       },
+       {
+        "color": "黑白",
+        "model": "FK262RU01X001-001",
+        "img": "FK262RU01X001-001.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk262ru01x001-001"
+       }
+      ]
+     },
+     {
+      "brand": "FILA",
+      "name": "BLADE DIAL",
+      "sizes": [
+       "19~24"
+      ],
+      "variants": [
+       {
+        "color": "黑白",
+        "model": "FK263OD01X003-002",
+        "img": "FK263OD01X003-002.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk263od01x003-002"
+       },
+       {
+        "color": "白藍",
+        "model": "FK263OD01X003-104",
+        "img": "FK263OD01X003-104.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk263od01x003-104"
+       }
+      ]
+     },
+     {
+      "brand": "FILA",
+      "name": "SKIPPER LCO",
+      "sizes": [
+       "17~24"
+      ],
+      "variants": [
+       {
+        "color": "黑銀",
+        "model": "FK263RU01X001-105",
+        "img": "FK263RU01X001-105.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk263ru01x001-105"
+       },
+       {
+        "color": "小公主粉",
+        "model": "FK263RU01X008-660",
+        "img": "FK263RU01X008-660.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk263ru01x008-660"
+       }
+      ]
+     },
+     {
+      "brand": "PUMA",
+      "name": "Club II Indoor V PS",
+      "sizes": [
+       "17.5~21"
+      ],
+      "variants": [
+       {
+        "color": "粉白",
+        "model": "40628508",
+        "img": "40628508.jpg",
+        "url": "https://www.abc-mart.com.tw/product/40628508"
+       }
+      ]
+     },
+     {
+      "brand": "PUMA",
+      "name": "Club LT AC+ PS",
+      "sizes": [
+       "17.5~20"
+      ],
+      "variants": [
+       {
+        "color": "白黑",
+        "model": "40830101",
+        "img": "40830101.jpg",
+        "url": "https://www.abc-mart.com.tw/product/40830101"
+       }
+      ]
+     },
+     {
+      "brand": "NEW BALANCE",
+      "name": "740 中童復古鞋",
+      "sizes": [
+       "17~21"
+      ],
+      "variants": [
+       {
+        "color": "鬥牛黑",
+        "model": "PZ740BM",
+        "img": "PZ740BM.jpg",
+        "url": "https://www.abc-mart.com.tw/product/pz740bm"
+       },
+       {
+        "color": "白銀",
+        "model": "PZ740WM",
+        "img": "PZ740WM.jpg",
+        "url": "https://www.abc-mart.com.tw/product/pz740wm"
+       }
+      ]
+     },
+     {
+      "brand": "NEW BALANCE",
+      "name": "530 中童復古鞋",
+      "sizes": [
+       "17~21"
+      ],
+      "variants": [
+       {
+        "color": "黑色",
+        "model": "PZ530LT",
+        "img": "PZ530LT.jpg",
+        "url": "https://www.abc-mart.com.tw/product/pz530lt"
+       }
+      ]
+     },
+     {
+      "brand": "SKECHERS",
+      "name": "RUN CONSISTENT",
+      "sizes": [
+       "19~23.5"
+      ],
+      "variants": [
+       {
+        "color": "黑白",
+        "model": "304212LBKW",
+        "img": "304212LBKW.jpg",
+        "url": "https://www.abc-mart.com.tw/product/304212lbkw"
+       }
+      ]
+     },
+     {
+      "brand": "adidas",
+      "name": "TENSAUR SPORT LITE",
+      "sizes": [
+       "17.5~25"
+      ],
+      "variants": [
+       {
+        "color": "淺藍",
+        "model": "LA5280",
+        "img": "LA5280.jpg",
+        "url": "https://www.abc-mart.com.tw/product/la5280"
+       }
+      ]
+     }
     ]
-  },
-  '216': {
-    name:'馬各斯', sub:'@magese216 ／ 參考尺寸 18.5cm', formUrl:'https://forms.gle/V5ozmhiHjFzjudABA',
-    groups:[
-      { label:'第 1 雙 ── 選一款（選一色）', items:[
-        { brand:'FILA', name:'RAYFLIDE DIAL KD', sizes:['19','20','21','22','23','24'],
-          variants:[
-            {color:'鬥牛黑', model:'FK261CD01X035-001', img:'FK261CD01X035-00108-01.jpg', url:'https://www.abc-mart.com.tw/product/fk261cd01x035-001'},
-          ]},
-        { brand:'SKECHERS', name:'RETRO-GRAPH', sizes:['17','18','19','20','21','22','23','23.5','24'],
-          variants:[
-            {color:'白銀', model:'404204LSLW', img:'404204LSLW13-01.jpg', url:'https://www.abc-mart.com.tw/product/404204lslw'},
-            {color:'白多彩', model:'319078LWSPK', img:'319078LWSPK13-01.jpg', url:'https://www.abc-mart.com.tw/product/319078lwspk'},
-          ]},
-        { brand:'SKECHERS', name:'MICROSPEC VELOCITY', sizes:['19','20','21','22','23','23.5'],
-          variants:[
-            {color:'阿凡達藍', model:'404125LNVSL', img:'404125LNVSL48-01.jpg', url:'https://www.abc-mart.com.tw/product/404125lnvsl'},
-            {color:'黑多彩', model:'404125LRDBK', img:'404125LRDBK05-01.jpg', url:'https://www.abc-mart.com.tw/product/404125lrdbk'},
-          ]},
-      ]},
-      { label:'第 2 雙 ── 選一款（選一色）', items:[
-        { brand:'PONY', name:'COOLING-K', sizes:['18','19','20','21','22','23'],
-          variants:[
-            {color:'哥布綠', model:'261K1CL02GN', img:'261K1CL02GN38-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl02gn'},
-            {color:'粉紫', model:'261K1CL02PM', img:'261K1CL02PM65-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl02pm'},
-            {color:'黑金屬', model:'261K1CL01SL', img:'261K1CL01SL03-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl01sl'},
-            {color:'黑多彩', model:'261K1CL01YW', img:'261K1CL01YW05-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl01yw'},
-          ]},
-      ]},
-      { label:'第 3 雙 ── 選一款（選一色）', items:[
-        { brand:'G.T HAWKINS', name:'MACH BROOKE', sizes:['18','19','20','21','22'],
-          variants:[
-            {color:'阿凡達藍', model:'G160501012', img:'G16050101248-01.jpg', url:'https://www.abc-mart.com.tw/product/g160501012'},
-            {color:'鬥牛黑', model:'G160501011', img:'G16050101108-01.webp', url:'https://www.abc-mart.com.tw/product/g160501011'},
-          ]},
-        { brand:'G.T HAWKINS', name:'LM BROOKE', sizes:['18','19','20','21','22'],
-          variants:[
-            {color:'阿凡達藍', model:'G160501014', img:'G16050101448-01.jpg', url:'https://www.abc-mart.com.tw/product/g160501014'},
-            {color:'酸梅紫', model:'G160501013', img:'G16050101358-01.jpg', url:'https://www.abc-mart.com.tw/product/g160501013'},
-          ]},
-      ]},
+   }
+  ]
+ },
+ "79529": {
+  "name": "Mavis",
+  "sub": "@mm79529",
+  "formUrl": "",
+  "groups": [
+   {
+    "label": "請挑選 3 雙（同款只能選一色）",
+    "items": [
+     {
+      "brand": "PONY",
+      "name": "MODERN-K",
+      "sizes": [
+       "18~23"
+      ],
+      "variants": [
+       {
+        "color": "鬥牛黑",
+        "model": "262K1MD01BK",
+        "img": "262K1MD01BK.jpg",
+        "url": "https://www.abc-mart.com.tw/product/262k1md01bk"
+       },
+       {
+        "color": "藍多彩",
+        "model": "262K1MD01BL",
+        "img": "262K1MD01BL.jpg",
+        "url": "https://www.abc-mart.com.tw/product/262k1md01bl"
+       },
+       {
+        "color": "粉白",
+        "model": "262K1MD01OW",
+        "img": "262K1MD01OW.jpg",
+        "url": "https://www.abc-mart.com.tw/product/262k1md01ow"
+       }
+      ]
+     },
+     {
+      "brand": "FILA",
+      "name": "SKIPPER MS",
+      "sizes": [
+       "18~24"
+      ],
+      "variants": [
+       {
+        "color": "米白",
+        "model": "FK262RU01X001-260",
+        "img": "FK262RU01X001-260.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk262ru01x001-260"
+       },
+       {
+        "color": "淺灰",
+        "model": "FK262RU01X001-031",
+        "img": "FK262RU01X001-031.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk262ru01x001-031"
+       },
+       {
+        "color": "黑白",
+        "model": "FK262RU01X001-001",
+        "img": "FK262RU01X001-001.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk262ru01x001-001"
+       }
+      ]
+     },
+     {
+      "brand": "FILA",
+      "name": "BLADE DIAL",
+      "sizes": [
+       "19~24"
+      ],
+      "variants": [
+       {
+        "color": "黑白",
+        "model": "FK263OD01X003-002",
+        "img": "FK263OD01X003-002.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk263od01x003-002"
+       },
+       {
+        "color": "白藍",
+        "model": "FK263OD01X003-104",
+        "img": "FK263OD01X003-104.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk263od01x003-104"
+       }
+      ]
+     },
+     {
+      "brand": "FILA",
+      "name": "SKIPPER LCO",
+      "sizes": [
+       "17~24"
+      ],
+      "variants": [
+       {
+        "color": "黑銀",
+        "model": "FK263RU01X001-105",
+        "img": "FK263RU01X001-105.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk263ru01x001-105"
+       },
+       {
+        "color": "小公主粉",
+        "model": "FK263RU01X008-660",
+        "img": "FK263RU01X008-660.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk263ru01x008-660"
+       }
+      ]
+     },
+     {
+      "brand": "PUMA",
+      "name": "Club II Indoor V PS",
+      "sizes": [
+       "17.5~21"
+      ],
+      "variants": [
+       {
+        "color": "粉白",
+        "model": "40628508",
+        "img": "40628508.jpg",
+        "url": "https://www.abc-mart.com.tw/product/40628508"
+       }
+      ]
+     },
+     {
+      "brand": "NEW BALANCE",
+      "name": "740 中童復古鞋",
+      "sizes": [
+       "17~21"
+      ],
+      "variants": [
+       {
+        "color": "鬥牛黑",
+        "model": "PZ740BM",
+        "img": "PZ740BM.jpg",
+        "url": "https://www.abc-mart.com.tw/product/pz740bm"
+       },
+       {
+        "color": "白銀",
+        "model": "PZ740WM",
+        "img": "PZ740WM.jpg",
+        "url": "https://www.abc-mart.com.tw/product/pz740wm"
+       }
+      ]
+     },
+     {
+      "brand": "NEW BALANCE",
+      "name": "530 中童復古鞋",
+      "sizes": [
+       "17~21"
+      ],
+      "variants": [
+       {
+        "color": "粉白",
+        "model": "PZ530EC",
+        "img": "PZ530EC.jpg",
+        "url": "https://www.abc-mart.com.tw/product/pz530ec"
+       }
+      ]
+     },
+     {
+      "brand": "SKECHERS",
+      "name": "RUN CONSISTENT",
+      "sizes": [
+       "18~23"
+      ],
+      "variants": [
+       {
+        "color": "粉紫",
+        "model": "304212LLAV",
+        "img": "304212LLAV.jpg",
+        "url": "https://www.abc-mart.com.tw/product/304212llav"
+       }
+      ]
+     },
+     {
+      "brand": "SKECHERS",
+      "name": "MAX RUN",
+      "sizes": [
+       "18~23"
+      ],
+      "variants": [
+       {
+        "color": "薄荷多彩",
+        "model": "303989LWMLT",
+        "img": "303989LWMLT.jpg",
+        "url": "https://www.abc-mart.com.tw/product/303989lwmlt"
+       }
+      ]
+     },
+     {
+      "brand": "adidas",
+      "name": "TENSAUR SPORT LITE",
+      "sizes": [
+       "17.5~25"
+      ],
+      "variants": [
+       {
+        "color": "淺藍",
+        "model": "LA5280",
+        "img": "LA5280.jpg",
+        "url": "https://www.abc-mart.com.tw/product/la5280"
+       },
+       {
+        "color": "淺粉",
+        "model": "LA5279",
+        "img": "LA5279.jpg",
+        "url": "https://www.abc-mart.com.tw/product/la5279"
+       }
+      ]
+     },
+     {
+      "brand": "FILA",
+      "name": "DISRUPTOR SD HEART 涼鞋",
+      "sizes": [
+       "18~23"
+      ],
+      "variants": [
+       {
+        "color": "黑色",
+        "model": "FS262CD06X001-001",
+        "img": "FS262CD06X001-001.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fs262cd06x001-001"
+       },
+       {
+        "color": "粉彩",
+        "model": "FS262CD06X001-734",
+        "img": "FS262CD06X001-734.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fs262cd06x001-734"
+       }
+      ]
+     }
     ]
-  },
-  '3636': {
-    name:'快快', sub:'@cc.baby36 ／ 參考尺寸 18cm', formUrl:'https://forms.gle/CZrhkBzoNNm4enCA7',
-    groups:[
-      { label:'第 1 雙 ── 選一款（選一色）', items:[
-        { brand:'PUMA', name:'Trinity 2 AC+ PS', sizes:['17.5','18.5','19','20','21'],
-          variants:[
-            {color:'白多彩', model:'40149110', img:'4014911015-01.jpg', url:'https://www.abc-mart.com.tw/product/40149110'},
-            {color:'白多彩', model:'40149112', img:'4014911215-01.jpg', url:'https://www.abc-mart.com.tw/product/40149112'},
-          ]},
-        { brand:'FILA', name:'ANCERUS', sizes:['18','19','20','21','22','23','24'],
-          variants:[
-            {color:'鬥牛黑', model:'FK262SN01X002-001', img:'FK262SN01X002-00108-01.jpg', url:'https://www.abc-mart.com.tw/product/fk262sn01x002-001'},
-            {color:'小公主粉', model:'FK262SN01X002-660', img:'FK262SN01X002-66068-01.jpg', url:'https://www.abc-mart.com.tw/product/fk262sn01x002-660'},
-          ]},
-      ]},
-      { label:'第 2 雙 ── 選一款（選一色）', items:[
-        { brand:'PONY', name:'COOLING-K', sizes:['18','19','20','21','22','23'],
-          variants:[
-            {color:'哥布綠', model:'261K1CL02GN', img:'261K1CL02GN38-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl02gn'},
-            {color:'粉紫', model:'261K1CL02PM', img:'261K1CL02PM65-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl02pm'},
-            {color:'黑金屬', model:'261K1CL01SL', img:'261K1CL01SL03-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl01sl'},
-            {color:'黑多彩', model:'261K1CL01YW', img:'261K1CL01YW05-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl01yw'},
-          ]},
-      ]},
-      { label:'第 3 雙 ── 選一款（選一色）', items:[
-        { brand:'NEW BALANCE', name:'中童復古鞋', sizes:['17','17.5','18.5','19','20','21'],
-          variants:[
-            {color:'桃白', model:'P40866R', img:'P40866R18-01.jpg', url:'https://www.abc-mart.com.tw/product/p40866r'},
-            {color:'桃白', model:'P40826U', img:'P40826U18-01.jpg', url:'https://www.abc-mart.com.tw/product/p40826u'},
-            {color:'小公主粉', model:'P4082HO', img:'P4082HO68-01.jpg', url:'https://www.abc-mart.com.tw/product/p4082ho'},
-            {color:'鬥牛黑', model:'P4082LF', img:'P4082LF08-01.jpg', url:'https://www.abc-mart.com.tw/product/p4082lf'},
-          ]},
-      ]},
-    ]
-  },
-  '79529': {
-    name:'Mavis', sub:'@mm79529 ／ 參考尺寸 21cm', formUrl:'https://forms.gle/LoHTq4U1g3WDuT1B9',
-    groups:[
-      { label:'第 1 雙 ── 選一款（選一色）', items:[
-        { brand:'FILA', name:'INTERUN MJ', sizes:['18','19','20','21','22','23','24'],
-          variants:[
-            {color:'粉紫', model:'FK261CD01X052-541', img:'FK261CD01X052-54113-01.jpg', url:'https://www.abc-mart.com.tw/product/fk261cd01x052-541'},
-            {color:'鬥牛黑', model:'FK261CD01X052-001', img:'FK261CD01X052-00103-01.jpg', url:'https://www.abc-mart.com.tw/product/fk261cd01x052-001'},
-          ]},
-      ]},
-      { label:'第 2 雙 ── 選一款（選一色）', items:[
-        { brand:'PONY', name:'COOLING-K', sizes:['18','19','20','21','22','23'],
-          variants:[
-            {color:'哥布綠', model:'261K1CL02GN', img:'261K1CL02GN38-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl02gn'},
-            {color:'粉紫', model:'261K1CL02PM', img:'261K1CL02PM65-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl02pm'},
-            {color:'黑金屬', model:'261K1CL01SL', img:'261K1CL01SL03-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl01sl'},
-            {color:'黑多彩', model:'261K1CL01YW', img:'261K1CL01YW05-01.jpg', url:'https://www.abc-mart.com.tw/product/261k1cl01yw'},
-          ]},
-      ]},
-      { label:'第 3 雙 ── 選一款（選一色）', items:[
-        { brand:'SKECHERS', name:'BOUNDER PRO', sizes:['17','18','19','20','21','22','23','23.5','24'],
-          variants:[
-            {color:'鬥牛黑', model:'303690LBLK', img:'303690LBLK05-01.jpg', url:'https://www.abc-mart.com.tw/product/303690lblk'},
-            {color:'小公主粉', model:'303690LLTPK', img:'303690LLTPK68-01.jpg', url:'https://www.abc-mart.com.tw/product/303690lltpk'},
-          ]},
-        { brand:'SKECHERS', name:'SOLA GLOW 2.0', sizes:['17','18','19','20','21','22','23'],
-          variants:[
-            {color:'酸梅紫', model:'303729LGYPK', img:'303729LGYPK58-01.jpg', url:'https://www.abc-mart.com.tw/product/303729lgypk'},
-            {color:'酸梅紫', model:'303729LNVPK', img:'303729LNVPK58-01.jpg', url:'https://www.abc-mart.com.tw/product/303729lnvpk'},
-          ]},
-      ]},
-    ]
-  }
+   }
+  ]
+ }
 };
 
 let currentUser = null;
@@ -280,7 +570,8 @@ function renderMain() {
   const u = currentUser;
   document.getElementById('user-title').textContent = u.name + ' 的選鞋清單';
   document.getElementById('user-sub').textContent = u.sub;
-  document.getElementById('form-link').href = u.formUrl;
+  const fl = document.getElementById('form-link');
+  if(u.formUrl){ fl.href = u.formUrl; fl.style.display = 'inline-flex'; } else { fl.style.display = 'none'; }
   const container = document.getElementById('shoe-groups');
   container.innerHTML = '';
   u.groups.forEach(group => {

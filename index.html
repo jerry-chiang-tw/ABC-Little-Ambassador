@@ -41,6 +41,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
 .card-img { width:100%; height:100%; object-fit:cover; display:block; position:absolute; top:0; left:0; opacity:0; transition:opacity 0.2s; }
 .card-img.active { opacity:1; }
 .only-badge { position:absolute; top:8px; left:8px; background:#e8001a; color:#fff; font-size:9px; font-weight:600; padding:2px 7px; border-radius:10px; }
+.smu-badge { position:absolute; top:8px; right:8px; background:#1a1a1a; color:#fff; font-size:9px; font-weight:600; padding:2px 7px; border-radius:10px; letter-spacing:0.03em; }
 .note-badge { position:absolute; top:8px; right:8px; background:#f5a623; color:#fff; font-size:9px; font-weight:600; padding:2px 7px; border-radius:10px; }
 .card-body { padding:10px 12px 12px; }
 .brand { font-size:10px; font-weight:600; color:#888; letter-spacing:0.08em; text-transform:uppercase; }
@@ -121,7 +122,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
 <div id="pick-bar"><div class="pb-inner"><div class="pb-left"><div class="pb-title" id="pb-title"></div><div id="pb-list"></div><div class="pb-msg" id="pb-msg"></div></div><button id="pb-submit" onclick="doSubmit()">送出選擇</button></div></div>
 
 <script>
-const SUBMIT_URL = ''; // 貼上 Apps Script 網頁應用程式網址
+const SUBMIT_URL = 'https://script.google.com/macros/s/AKfycbzIV9ReEuG54krwkqkPQsJD_wZGKUsXZQdr98vYoxs5_3HdBwzDewJw2bVrV5-SrC0/exec';
 const COLOR_MAP = {'淺灰':'#c9cccc','黑白':'#2a2a2a','白藍':'#dbe8f5','淺藍':'#a9c4e6','淺粉':'#f4b8c8','薄荷多彩':'#bfe3d0','白黑':'#f2f2f2','粉彩':'#f0c9dd','黑色':'#1a1a1a',
   '鬥牛黑':'#1a1a1a','小公主粉':'#f4a7b9','桃白':'#f9c5b3','酸梅紫':'#b48ec8',
   '阿凡達藍':'#5bbcd6','黑多彩':'#3a3a3a','白多彩':'#e8e8e8','藍多彩':'#7ab8e8',
@@ -159,7 +160,8 @@ const USERS = {
         "img": "262K1MD01BL.jpg",
         "url": "https://www.abc-mart.com.tw/product/262k1md01bl"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "FILA",
@@ -234,7 +236,11 @@ const USERS = {
       "brand": "PUMA",
       "name": "Club II Indoor V PS",
       "sizes": [
-       "17.5~21"
+       "17.5",
+       "18.5",
+       "19",
+       "20",
+       "21"
       ],
       "variants": [
        {
@@ -243,13 +249,17 @@ const USERS = {
         "img": "40628508.jpg",
         "url": "https://www.abc-mart.com.tw/product/40628508"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "PUMA",
       "name": "Club LT AC+ PS",
       "sizes": [
-       "17.5~20"
+       "17.5",
+       "18.5",
+       "19",
+       "20"
       ],
       "variants": [
        {
@@ -258,13 +268,19 @@ const USERS = {
         "img": "40830101.jpg",
         "url": "https://www.abc-mart.com.tw/product/40830101"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "NEW BALANCE",
       "name": "740 中童復古鞋",
       "sizes": [
-       "17~21"
+       "17",
+       "17.5",
+       "18.5",
+       "19",
+       "20",
+       "21"
       ],
       "variants": [
        {
@@ -279,13 +295,19 @@ const USERS = {
         "img": "PZ740WM.jpg",
         "url": "https://www.abc-mart.com.tw/product/pz740wm"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "NEW BALANCE",
       "name": "530 中童復古鞋",
       "sizes": [
-       "17~21"
+       "17",
+       "17.5",
+       "18.5",
+       "19",
+       "20",
+       "21"
       ],
       "variants": [
        {
@@ -294,13 +316,19 @@ const USERS = {
         "img": "PZ530LT.jpg",
         "url": "https://www.abc-mart.com.tw/product/pz530lt"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "SKECHERS",
       "name": "RUN CONSISTENT",
       "sizes": [
-       "19~23.5"
+       "19",
+       "20",
+       "21",
+       "22",
+       "23",
+       "23.5"
       ],
       "variants": [
        {
@@ -309,13 +337,22 @@ const USERS = {
         "img": "304212LBKW.jpg",
         "url": "https://www.abc-mart.com.tw/product/304212lbkw"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "adidas",
       "name": "TENSAUR SPORT LITE",
       "sizes": [
-       "17.5~25"
+       "17.5",
+       "18.5",
+       "19.5",
+       "20",
+       "21",
+       "22",
+       "23",
+       "24",
+       "25"
       ],
       "variants": [
        {
@@ -324,7 +361,8 @@ const USERS = {
         "img": "LA5280.jpg",
         "url": "https://www.abc-mart.com.tw/product/la5280"
        }
-      ]
+      ],
+      "smu": true
      }
     ]
    }
@@ -363,7 +401,8 @@ const USERS = {
         "img": "262K1MD01OW.jpg",
         "url": "https://www.abc-mart.com.tw/product/262k1md01ow"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "FILA",
@@ -438,7 +477,11 @@ const USERS = {
       "brand": "PUMA",
       "name": "Club II Indoor V PS",
       "sizes": [
-       "17.5~21"
+       "17.5",
+       "18.5",
+       "19",
+       "20",
+       "21"
       ],
       "variants": [
        {
@@ -447,13 +490,19 @@ const USERS = {
         "img": "40628508.jpg",
         "url": "https://www.abc-mart.com.tw/product/40628508"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "NEW BALANCE",
       "name": "740 中童復古鞋",
       "sizes": [
-       "17~21"
+       "17",
+       "17.5",
+       "18.5",
+       "19",
+       "20",
+       "21"
       ],
       "variants": [
        {
@@ -468,13 +517,19 @@ const USERS = {
         "img": "PZ740WM.jpg",
         "url": "https://www.abc-mart.com.tw/product/pz740wm"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "NEW BALANCE",
       "name": "530 中童復古鞋",
       "sizes": [
-       "17~21"
+       "17",
+       "17.5",
+       "18.5",
+       "19",
+       "20",
+       "21"
       ],
       "variants": [
        {
@@ -483,7 +538,8 @@ const USERS = {
         "img": "PZ530EC.jpg",
         "url": "https://www.abc-mart.com.tw/product/pz530ec"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "SKECHERS",
@@ -498,7 +554,8 @@ const USERS = {
         "img": "304212LLAV.jpg",
         "url": "https://www.abc-mart.com.tw/product/304212llav"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "SKECHERS",
@@ -513,13 +570,22 @@ const USERS = {
         "img": "303989LWMLT.jpg",
         "url": "https://www.abc-mart.com.tw/product/303989lwmlt"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "adidas",
       "name": "TENSAUR SPORT LITE",
       "sizes": [
-       "17.5~25"
+       "17.5",
+       "18.5",
+       "19.5",
+       "20",
+       "21",
+       "22",
+       "23",
+       "24",
+       "25"
       ],
       "variants": [
        {
@@ -534,7 +600,8 @@ const USERS = {
         "img": "LA5279.jpg",
         "url": "https://www.abc-mart.com.tw/product/la5279"
        }
-      ]
+      ],
+      "smu": true
      },
      {
       "brand": "FILA",
@@ -652,6 +719,12 @@ function makeCard(g) {
     badge.textContent = '共' + g.variants.length + '色';
     imgWrap.appendChild(badge);
   }
+  if(g.smu) {
+    const sb = document.createElement('div');
+    sb.className = 'smu-badge';
+    sb.textContent = 'ABC-MART 獨賣';
+    imgWrap.appendChild(sb);
+  }
   if(g.note) {
     const nb = document.createElement('div');
     nb.className = 'note-badge';
@@ -682,7 +755,7 @@ function makeCard(g) {
 
   const sizeSel = document.createElement('select');
   sizeSel.className = 'size-select';
-  sizeSel.innerHTML = '<option value="">選擇尺寸</option>' + sizeOptions((g.sizes||[])[0]).map(s => `<option value="${s}">${s} cm</option>`).join('');
+  sizeSel.innerHTML = '<option value="">選擇尺寸</option>' + ((g.sizes||[]).length>1 ? g.sizes : sizeOptions((g.sizes||[])[0])).map(s => `<option value="${s}">${s} cm</option>`).join('');
 
   const pickBtn = document.createElement('button');
   pickBtn.className = 'pick-btn';

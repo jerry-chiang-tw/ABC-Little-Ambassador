@@ -59,6 +59,26 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
 .link-btn { font-size:11px; color:#0066cc; text-decoration:none; }
 .size-confirm { font-size:10px; color:#a06000; }
 @media (max-width:480px) { .grid { grid-template-columns:repeat(2,1fr); } .steps { flex-direction:column; } }
+
+.size-select { width:100%; padding:6px 8px; margin-bottom:8px; border:1px solid #ddd; border-radius:8px; font-size:12px; background:#fff; color:#1a1a1a; }
+.size-select.need { border-color:#e8001a; box-shadow:0 0 0 2px rgba(232,0,26,0.15); }
+.pick-btn { width:100%; padding:8px; margin-bottom:8px; border:1px solid #1a1a1a; border-radius:8px; background:#fff; color:#1a1a1a; font-size:12px; font-weight:600; cursor:pointer; }
+.pick-btn:hover:not(:disabled) { background:#f0f0f0; }
+.pick-btn.on { background:#1a1a1a; color:#fff; }
+.pick-btn:disabled { border-color:#ddd; color:#aaa; cursor:not-allowed; background:#fafafa; }
+.card.picked { border-color:#1a1a1a; box-shadow:0 0 0 2px #1a1a1a; }
+#main-screen { padding-bottom:170px; }
+#pick-bar { position:fixed; left:0; right:0; bottom:0; background:#fff; border-top:1px solid #ddd; box-shadow:0 -4px 16px rgba(0,0,0,0.08); padding:10px 16px; z-index:50; display:none; }
+.pb-inner { max-width:900px; margin:0 auto; display:flex; gap:12px; align-items:center; justify-content:space-between; }
+.pb-left { flex:1; min-width:0; }
+.pb-title { font-size:13px; font-weight:600; margin-bottom:4px; }
+.pb-item { font-size:12px; color:#444; display:flex; align-items:center; gap:6px; line-height:1.6; }
+.pb-x { border:none; background:none; color:#888; cursor:pointer; font-size:12px; }
+.pb-msg { font-size:12px; margin-top:4px; }
+.pb-msg.ok { color:#1a7f37; } .pb-msg.err { color:#e8001a; }
+#pb-submit { padding:12px 22px; border:none; border-radius:24px; background:#1a1a1a; color:#fff; font-size:14px; font-weight:500; cursor:pointer; white-space:nowrap; }
+#pb-submit:disabled { background:#ccc; cursor:not-allowed; }
+@media (max-width:480px) { .pb-inner { flex-direction:column; align-items:stretch; } }
 </style>
 </head>
 <body>
@@ -87,19 +107,21 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
   <div class="notice">
     以下是幫你挑好的鞋款，請從中挑選 <strong>3 雙</strong>，同款只能選一色。<br><br>
     尺寸已標示在卡片上，如果要確認尺寸正確，仍建議試穿。<br><br>
-    填表單時請填寫正確，如需修正需在商品寄出前提出修改，<strong>公關品寄出後恕不提供換貨等需求</strong>。
+    送出前請確認尺寸與顏色。可重複送出，<strong>以最後一次送出的內容為準</strong>；如需修正請在商品寄出前提出，<strong>公關品寄出後恕不提供換貨等需求</strong>。
   </div>
   <div class="steps">
-    <div class="step"><div class="step-num">1</div>點色點切換顏色</div>
-    <div class="step"><div class="step-num">2</div>點官網確認細節</div>
-    <div class="step"><div class="step-num">3</div>填寫回填表單</div>
+    <div class="step"><div class="step-num">1</div>點色點切換顏色、選尺寸</div>
+    <div class="step"><div class="step-num">2</div>點「選這雙」，共選 3 雙</div>
+    <div class="step"><div class="step-num">3</div>按「送出選擇」</div>
   </div>
-  <a class="form-btn" id="form-link" href="#" target="_blank">📋 填寫選鞋回填表單 →</a>
   <div class="divider"></div>
   <div id="shoe-groups"></div>
 </div>
 
+<div id="pick-bar"><div class="pb-inner"><div class="pb-left"><div class="pb-title" id="pb-title"></div><div id="pb-list"></div><div class="pb-msg" id="pb-msg"></div></div><button id="pb-submit" onclick="doSubmit()">送出選擇</button></div></div>
+
 <script>
+const SUBMIT_URL = ''; // 貼上 Apps Script 網頁應用程式網址
 const COLOR_MAP = {'淺灰':'#c9cccc','黑白':'#2a2a2a','白藍':'#dbe8f5','淺藍':'#a9c4e6','淺粉':'#f4b8c8','薄荷多彩':'#bfe3d0','白黑':'#f2f2f2','粉彩':'#f0c9dd','黑色':'#1a1a1a',
   '鬥牛黑':'#1a1a1a','小公主粉':'#f4a7b9','桃白':'#f9c5b3','酸梅紫':'#b48ec8',
   '阿凡達藍':'#5bbcd6','黑多彩':'#3a3a3a','白多彩':'#e8e8e8','藍多彩':'#7ab8e8',
@@ -534,6 +556,19 @@ const USERS = {
         "url": "https://www.abc-mart.com.tw/product/fs262cd06x001-734"
        }
       ]
+     },
+     {
+      "brand": "FILA",
+      "name": "FK261CD01X036",
+      "sizes": [],
+      "variants": [
+       {
+        "color": "小公主粉",
+        "model": "FK261CD01X036-660",
+        "img": "FK261CD01X036-660.jpg",
+        "url": "https://www.abc-mart.com.tw/product/fk261cd01x036-660"
+       }
+      ]
      }
     ]
    }
@@ -542,12 +577,16 @@ const USERS = {
 };
 
 let currentUser = null;
+let currentPw = '';
+const picks = new Map();
+let refreshers = [];
 
 function doLogin() {
   const pw = document.getElementById('password-input').value.trim();
   const err = document.getElementById('login-error');
   if(USERS[pw]) {
     currentUser = USERS[pw];
+    currentPw = pw;
     err.textContent = '';
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('main-screen').style.display = 'block';
@@ -564,16 +603,17 @@ function doLogout() {
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('password-input').value = '';
   document.getElementById('shoe-groups').innerHTML = '';
+  picks.clear(); refreshers = [];
+  document.getElementById('pick-bar').style.display = 'none';
 }
 
 function renderMain() {
   const u = currentUser;
   document.getElementById('user-title').textContent = u.name + ' 的選鞋清單';
   document.getElementById('user-sub').textContent = u.sub;
-  const fl = document.getElementById('form-link');
-  if(u.formUrl){ fl.href = u.formUrl; fl.style.display = 'inline-flex'; } else { fl.style.display = 'none'; }
   const container = document.getElementById('shoe-groups');
   container.innerHTML = '';
+  picks.clear(); refreshers = [];
   u.groups.forEach(group => {
     const labelEl = document.createElement('div');
     labelEl.className = 'group-label';
@@ -584,12 +624,16 @@ function renderMain() {
     group.items.forEach(item => grid.appendChild(makeCard(item)));
     container.appendChild(grid);
   });
+  document.getElementById('pick-bar').style.display = 'block';
+  updateBar();
 }
 
 function makeCard(g) {
   const hasMulti = g.variants.length > 1;
   const card = document.createElement('div');
   card.className = 'card';
+  let activeIdx = 0;
+  let ready = false;
 
   const imgWrap = document.createElement('div');
   imgWrap.className = 'card-img-wrap';
@@ -627,7 +671,6 @@ function makeCard(g) {
   const modelLabel = document.createElement('div');
   modelLabel.className = 'model';
 
-  // 尺寸標籤
   const sizesRow = document.createElement('div');
   sizesRow.className = 'sizes-row';
   (g.sizes||[]).forEach(s => {
@@ -637,16 +680,44 @@ function makeCard(g) {
     sizesRow.appendChild(tag);
   });
 
+  const sizeSel = document.createElement('select');
+  sizeSel.className = 'size-select';
+  sizeSel.innerHTML = '<option value="">選擇尺寸</option>' + sizeOptions((g.sizes||[])[0]).map(s => `<option value="${s}">${s} cm</option>`).join('');
+
+  const pickBtn = document.createElement('button');
+  pickBtn.className = 'pick-btn';
+
   const linkRow = document.createElement('div');
   linkRow.className = 'link-row';
 
+  function refresh() {
+    const p = picks.get(g.name);
+    if(p) {
+      pickBtn.textContent = '✓ 已選（點擊取消）';
+      pickBtn.className = 'pick-btn on';
+      pickBtn.disabled = false;
+      card.classList.add('picked');
+    } else {
+      card.classList.remove('picked');
+      const full = picks.size >= 3;
+      pickBtn.className = 'pick-btn';
+      pickBtn.disabled = full;
+      pickBtn.textContent = full ? '已選滿 3 雙' : '選這雙';
+    }
+  }
+  refreshers.push(refresh);
+
   function updateActive(idx) {
+    activeIdx = idx;
     const v = g.variants[idx];
     imgWrap.querySelectorAll('.card-img').forEach((img,i) => img.classList.toggle('active', i===idx));
     colorLabel.textContent = v.color;
     modelLabel.textContent = v.model;
     linkRow.innerHTML = `<a class="link-btn" href="${v.url}" target="_blank">🔗 查看官網</a>`;
     selector.querySelectorAll('.cs-dot').forEach((d,i) => d.classList.toggle('active', i===idx));
+    const p = picks.get(g.name);
+    if(p) p.idx = idx;
+    if(ready) updateBar();
   }
 
   g.variants.forEach((v, i) => {
@@ -659,6 +730,21 @@ function makeCard(g) {
     selector.appendChild(dot);
   });
 
+  sizeSel.onchange = () => {
+    sizeSel.classList.remove('need');
+    const p = picks.get(g.name);
+    if(p) p.size = sizeSel.value;
+    updateBar();
+  };
+  pickBtn.onclick = () => {
+    if(picks.has(g.name)) { picks.delete(g.name); }
+    else {
+      if(!sizeSel.value) { sizeSel.classList.add('need'); sizeSel.focus(); return; }
+      picks.set(g.name, { g, idx: activeIdx, size: sizeSel.value });
+    }
+    updateBar();
+  };
+
   body.appendChild(selector);
   body.appendChild(colorLabel);
   body.appendChild(modelLabel);
@@ -669,10 +755,67 @@ function makeCard(g) {
     body.appendChild(sn);
   }
   body.appendChild(sizesRow);
+  body.appendChild(sizeSel);
+  body.appendChild(pickBtn);
   body.appendChild(linkRow);
   card.appendChild(body);
   updateActive(0);
+  refresh();
+  ready = true;
   return card;
+}
+
+function sizeOptions(range) {
+  const m = String(range||'').match(/([\d.]+)\s*[~～-]\s*([\d.]+)/);
+  if(!m) return sizeOptions('17~24');
+  const a = parseFloat(m[1]), b = parseFloat(m[2]);
+  const out = [a];
+  for(let x = Math.floor(a)+1; x < b; x++) out.push(x);
+  if(b > a) out.push(b);
+  return out.map(String);
+}
+
+function updateBar() {
+  refreshers.forEach(f => f());
+  const list = document.getElementById('pb-list');
+  list.innerHTML = '';
+  let i = 0;
+  picks.forEach((p, key) => {
+    i++;
+    const v = p.g.variants[p.idx];
+    const row = document.createElement('div');
+    row.className = 'pb-item';
+    const t = document.createElement('span');
+    t.textContent = i + '. ' + p.g.name + '・' + v.color + '・' + (p.size ? '尺寸 ' + p.size : '尚未選尺寸');
+    const x = document.createElement('button');
+    x.className = 'pb-x'; x.textContent = '✕ 取消';
+    x.onclick = () => { picks.delete(key); updateBar(); };
+    row.appendChild(t); row.appendChild(x);
+    list.appendChild(row);
+  });
+  document.getElementById('pb-title').textContent = '已選 ' + picks.size + ' / 3 雙';
+  const ready = picks.size === 3 && [...picks.values()].every(p => p.size);
+  document.getElementById('pb-submit').disabled = !ready;
+}
+
+async function doSubmit() {
+  const msg = document.getElementById('pb-msg');
+  const btn = document.getElementById('pb-submit');
+  const payload = { name: currentUser.name, pw: currentPw, picks: [...picks.values()].map(p => {
+    const v = p.g.variants[p.idx];
+    return { brand:p.g.brand, name:p.g.name, color:v.color, model:v.model, size:p.size };
+  })};
+  if(!SUBMIT_URL) { msg.className = 'pb-msg err'; msg.textContent = '尚未設定送出網址，請聯絡活動窗口。'; return; }
+  btn.disabled = true; msg.className = 'pb-msg'; msg.textContent = '送出中…';
+  try {
+    await fetch(SUBMIT_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body: JSON.stringify(payload) });
+    msg.className = 'pb-msg ok';
+    msg.textContent = '✓ 已送出！如需修改可直接調整後再送一次，以最後一次為準。';
+  } catch(e) {
+    msg.className = 'pb-msg err'; msg.textContent = '送出失敗，請檢查網路後再試一次。';
+  }
+  btn.disabled = false;
+  updateBar();
 }
 </script>
 </body>

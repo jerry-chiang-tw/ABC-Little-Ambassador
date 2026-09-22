@@ -7,7 +7,11 @@
 <style>
 * { box-sizing:border-box; margin:0; padding:0; }
 body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f5f5f3; color:#1a1a1a; min-height:100vh; }
-#login-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
+#loading-screen { position:fixed; inset:0; background:#ffda00; display:flex; align-items:center; justify-content:center; z-index:200; transition:opacity 0.4s ease; }
+#loading-screen.fade-out { opacity:0; pointer-events:none; }
+.loading-logo-img { width:min(62vw,320px); height:auto; }
+#login-screen { display:none; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
+#login-screen.ready { display:flex; }
 .login-box { background:#fff; border-radius:16px; padding:36px 32px; width:100%; max-width:360px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
 .login-logo { display:block; height:56px; width:auto; margin:0 auto 14px; }
 .header-logo { height:26px; width:auto; display:block; }
@@ -103,9 +107,22 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
 .cf-back { background:#fff; border:1px solid #1a1a1a; color:#1a1a1a; }
 .cf-ok { background:#1a1a1a; border:1px solid #1a1a1a; color:#fff; }
 .cf-ok:disabled { background:#ccc; border-color:#ccc; cursor:not-allowed; }
+
+#welcome-mask { position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:100; display:none; align-items:center; justify-content:center; padding:16px; }
+#welcome-mask.open { display:flex; }
+.wc-box { background:#fff; border-radius:16px; width:100%; max-width:360px; box-shadow:0 8px 32px rgba(0,0,0,0.25); padding:32px 26px 26px; text-align:center; }
+.wc-emoji { font-size:36px; margin-bottom:10px; }
+.wc-title { font-size:19px; font-weight:700; margin-bottom:8px; }
+.wc-sub { font-size:13px; color:#666; line-height:1.6; margin-bottom:22px; }
+.wc-btn { width:100%; padding:13px; background:#1a1a1a; color:#fff; border:none; border-radius:24px; font-size:14px; font-weight:600; cursor:pointer; }
+.wc-btn:hover { background:#333; }
 </style>
 </head>
 <body>
+
+<div id="loading-screen">
+  <img class="loading-logo-img" id="loading-logo-img" src="images/loading-1.png" alt="ABC-MART KIDS">
+</div>
 
 <div id="login-screen">
   <div class="login-box">
@@ -118,6 +135,13 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
     <div class="login-error" id="login-error"></div>
   </div>
 </div>
+
+<div id="welcome-mask"><div class="wc-box">
+  <div class="wc-emoji">👋</div>
+  <div class="wc-title" id="wc-title"></div>
+  <div class="wc-sub">幫你精選了本季的鞋款，準備好就開始挑選吧！</div>
+  <button class="wc-btn" onclick="closeWelcome()">開始選鞋</button>
+</div></div>
 
 <div id="main-screen">
   <div class="header">
@@ -681,11 +705,43 @@ function doLogin() {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('main-screen').style.display = 'block';
     renderMain();
+    openWelcome();
   } else {
     err.textContent = '密碼錯誤，請再試一次';
   }
 }
 document.getElementById('password-input').addEventListener('keydown', e => { if(e.key==='Enter') doLogin(); });
+
+function openWelcome() {
+  document.getElementById('wc-title').textContent = 'Hi, ' + currentUser.name + '！歡迎回來';
+  document.getElementById('welcome-mask').classList.add('open');
+}
+function closeWelcome() {
+  document.getElementById('welcome-mask').classList.remove('open');
+}
+
+(function runLoadingScreen() {
+  const FRAME_COUNT = 9;
+  const FRAME_MS = 130;
+  const HOLD_MS = 500;
+  const img = document.getElementById('loading-logo-img');
+  const loadingEl = document.getElementById('loading-screen');
+  const loginEl = document.getElementById('login-screen');
+  let frame = 1;
+  const timer = setInterval(() => {
+    frame++;
+    if(frame > FRAME_COUNT) {
+      clearInterval(timer);
+      loginEl.classList.add('ready');
+      setTimeout(() => {
+        loadingEl.classList.add('fade-out');
+        setTimeout(() => { loadingEl.style.display = 'none'; }, 400);
+      }, HOLD_MS);
+      return;
+    }
+    img.src = 'images/loading-' + frame + '.png';
+  }, FRAME_MS);
+})();
 
 function doLogout() {
   currentUser = null;

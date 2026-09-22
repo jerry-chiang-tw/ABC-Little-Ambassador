@@ -9,7 +9,8 @@
 body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; background:#f5f5f3; color:#1a1a1a; min-height:100vh; }
 #login-screen { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
 .login-box { background:#fff; border-radius:16px; padding:36px 32px; width:100%; max-width:360px; box-shadow:0 4px 20px rgba(0,0,0,0.08); }
-.login-logo { font-size:13px; font-weight:600; color:#888; letter-spacing:0.1em; text-align:center; margin-bottom:8px; }
+.login-logo { display:block; height:56px; width:auto; margin:0 auto 14px; }
+.header-logo { height:26px; width:auto; display:block; }
 .login-title { font-size:20px; font-weight:600; text-align:center; margin-bottom:4px; }
 .login-sub { font-size:13px; color:#888; text-align:center; margin-bottom:28px; }
 .login-label { font-size:12px; color:#666; margin-bottom:6px; }
@@ -24,6 +25,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
 .header h1 { font-size:20px; font-weight:600; }
 .logout-btn { font-size:12px; color:#888; background:none; border:1px solid #ddd; border-radius:20px; padding:4px 12px; cursor:pointer; }
 .header p { font-size:13px; color:#666; }
+.header-intro { font-size:14px; color:#333; line-height:1.7; margin-top:10px; }
 .deadline { display:inline-flex; align-items:center; gap:5px; margin-top:8px; font-size:12px; padding:4px 14px; border-radius:20px; background:#fff8e6; color:#a06000; border:1px solid #ffe8a0; }
 .notice { margin-top:12px; padding:12px 16px; border-radius:10px; border:1px solid #ffe8a0; background:#fff8e6; color:#7a4800; font-size:13px; line-height:1.6; }
 .notice strong { font-weight:600; }
@@ -107,7 +109,7 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
 
 <div id="login-screen">
   <div class="login-box">
-    <div class="login-logo">ABC-MART</div>
+    <img class="login-logo" src="images/logo-square.png" alt="ABC-MART KIDS">
     <div class="login-title">小小大使 選鞋清單</div>
     <div class="login-sub">2026 Q3</div>
     <div class="login-label">請輸入你的專屬密碼</div>
@@ -119,15 +121,17 @@ body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif; backg
 
 <div id="main-screen">
   <div class="header">
+    <img class="header-logo" src="images/logo-wide.png" alt="ABC-MART KIDS" style="margin-bottom:10px;">
     <div class="header-top">
       <h1 id="user-title"></h1>
       <button class="logout-btn" onclick="doLogout()">登出</button>
     </div>
     <p id="user-sub"></p>
+    <p class="header-intro">謝謝你上一季的分享與推薦 🩷 這次是 <strong>2026 Q3</strong> 幫你精選的鞋款，一起來挑選你喜歡的三雙吧！</p>
     <div class="deadline">⏰ 截止日期：9 / 30</div>
   </div>
   <div class="notice">
-    以下是幫你挑好的鞋款，請從中挑選 <strong>3 雙</strong>，同款只能選一色。<br><br>
+    以下是幫你挑好的鞋款，請在每一組中選 1 款，三組共選 <strong>3 雙</strong>。<br><br>
     尺寸已標示在卡片上，如果要確認尺寸正確，仍建議試穿。<br><br>
     送出前請確認尺寸與顏色。可重複送出，<strong>以最後一次送出的內容為準</strong>；如需修正請在商品寄出前提出，<strong>公關品寄出後恕不提供換貨等需求</strong>。
   </div>
